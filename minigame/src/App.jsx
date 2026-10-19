@@ -1,14 +1,8 @@
-import { useState } from "react";
 import "./App.css";
-import Board from "./components/Board.jsx";
-import Square from "./components/Square.jsx";
+import { Board } from "./components/Board";
 
 function App() {
-    return (
-        <div className="Board">
-            <Board />
-        </div>
-    );
+    return <Board />;
 }
 
 export default App;

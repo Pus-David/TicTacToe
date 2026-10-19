@@ -2,16 +2,13 @@
     display: flex;
 }
 .square {
-    width: 100px;
-    height: 100px;
+    width: 30px;
+    height: 30px;
     border: 1px solid black;
     margin-top: -1px;
     margin-right: -1px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 85px;
-}
-.row {
-    display: flex;
+    font-size: 25px;
 }
