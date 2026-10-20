@@ -60,7 +60,7 @@ export function Board() {
     }
 
     function handlePlayAgain() {
-        setStatus(new Array(9).fill(undefined));
+        setStatus(new Array(CELL_COUNT).fill(undefined));
         setWinner(undefined);
         setLastCell(undefined);
         lastPlayer.current = undefined;
@@ -68,57 +68,20 @@ export function Board() {
 
     return (
         <div className="board">
-            <div className="board-row">
-                <Square
-                    value={status[0]}
-                    highlight={0 === lastCell}
-                    onSquareClick={(player) => handleClick(0, player)}
-                />
-                <Square
-                    value={status[1]}
-                    highlight={1 === lastCell}
-                    onSquareClick={(player) => handleClick(1, player)}
-                />
-                <Square
-                    value={status[2]}
-                    highlight={2 === lastCell}
-                    onSquareClick={(player) => handleClick(2, player)}
-                />
-            </div>
-            <div className="board-row">
-                <Square
-                    value={status[3]}
-                    highlight={3 === lastCell}
-                    onSquareClick={(player) => handleClick(3, player)}
-                />
-                <Square
-                    value={status[4]}
-                    highlight={4 === lastCell}
-                    onSquareClick={(player) => handleClick(4, player)}
-                />
-                <Square
-                    value={status[5]}
-                    highlight={5 === lastCell}
-                    onSquareClick={(player) => handleClick(5, player)}
-                />
-            </div>
-            <div className="board-row">
-                <Square
-                    value={status[6]}
-                    highlight={6 === lastCell}
-                    onSquareClick={(player) => handleClick(6, player)}
-                />
-                <Square
-                    value={status[7]}
-                    highlight={7 === lastCell}
-                    onSquareClick={(player) => handleClick(7, player)}
-                />
-                <Square
-                    value={status[8]}
-                    highlight={8 === lastCell}
-                    onSquareClick={(player) => handleClick(8, player)}
-                />
-            </div>
+            {BOARD_INDICES.map((rowIndex) => (
+                <div className="board-row">
+                    {BOARD_INDICES.map((columnIndex) => {
+                        const index = rowIndex * BOARD_SIDES + columnIndex;
+                        return (
+                            <Square
+                                value={status[index]}
+                                highlight={index === lastCell}
+                                onSquareClick={(player) => handleClick(index, player)}
+                            />
+                        );
+                    })}
+                </div>
+            ))}
             {winner && <div>`Game over! {winner} won`</div>}
             {winner && <button onClick={handlePlayAgain}>Reset</button>}
         </div>
