@@ -1,9 +1,68 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PLAYER_O, PLAYER_X, Square } from "./Square";
 
 const BOARD_SIDES = 3;
 const BOARD_INDICES = [...Array(BOARD_SIDES).keys()];
 const CELL_COUNT = BOARD_SIDES * BOARD_SIDES;
+const STORAGE_KEY = "tictactoe-game-v1";
+
+function getInitialGameState() {
+    const initialState = {
+        status: new Array(CELL_COUNT).fill(undefined),
+        winner: undefined,
+        score: { [PLAYER_X]: 0, [PLAYER_O]: 0 },
+        gameOver: false,
+        lastCell: undefined,
+        lastPlayer: undefined,
+    };
+
+    try {
+        const savedGame = localStorage.getItem(STORAGE_KEY);
+        if (!savedGame) return initialState;
+
+        const parsed = JSON.parse(savedGame);
+        const validPlayer = (player) => player === PLAYER_X || player === PLAYER_O;
+        const validStatus =
+            Array.isArray(parsed.status) &&
+            parsed.status.length === CELL_COUNT &&
+            parsed.status.every((cell) => cell === null || validPlayer(cell));
+        const validScore =
+            parsed.score &&
+            Number.isInteger(parsed.score[PLAYER_X]) &&
+            parsed.score[PLAYER_X] >= 0 &&
+            Number.isInteger(parsed.score[PLAYER_O]) &&
+            parsed.score[PLAYER_O] >= 0;
+        const validLastCell =
+            parsed.lastCell === null ||
+            (Number.isInteger(parsed.lastCell) &&
+                parsed.lastCell >= 0 &&
+                parsed.lastCell < CELL_COUNT);
+
+        if (
+            !validStatus ||
+            !validScore ||
+            (parsed.winner !== null && !validPlayer(parsed.winner)) ||
+            typeof parsed.gameOver !== "boolean" ||
+            !validLastCell ||
+            (parsed.lastPlayer !== null && !validPlayer(parsed.lastPlayer))
+        ) {
+            console.error("Saved Tic Tac Toe game data is invalid.");
+            return initialState;
+        }
+
+        return {
+            status: parsed.status.map((cell) => cell ?? undefined),
+            winner: parsed.winner ?? undefined,
+            score: parsed.score,
+            gameOver: parsed.gameOver,
+            lastCell: parsed.lastCell ?? undefined,
+            lastPlayer: parsed.lastPlayer ?? undefined,
+        };
+    } catch (error) {
+        console.error("Could not load the saved Tic Tac Toe game.", error);
+        return initialState;
+    }
+}
 
 const WIN_POSITIONS = [
     [0, 1, 2],
@@ -17,12 +76,31 @@ const WIN_POSITIONS = [
 ];
 
 export function Board() {
-    const [status, setStatus] = useState(new Array(CELL_COUNT).fill(undefined));
-    const [winner, setWinner] = useState();
-    const [score, setScore] = useState({ [PLAYER_X]: 0, [PLAYER_O]: 0 });
-    const [gameOver, setGameOver] = useState(false);
-    const [lastCell, setLastCell] = useState();
-    let lastPlayer = useRef();
+    const [initialState] = useState(getInitialGameState);
+    const [status, setStatus] = useState(initialState.status);
+    const [winner, setWinner] = useState(initialState.winner);
+    const [score, setScore] = useState(initialState.score);
+    const [gameOver, setGameOver] = useState(initialState.gameOver);
+    const [lastCell, setLastCell] = useState(initialState.lastCell);
+    const lastPlayer = useRef(initialState.lastPlayer);
+
+    useEffect(() => {
+        try {
+            localStorage.setItem(
+                STORAGE_KEY,
+                JSON.stringify({
+                    status,
+                    winner: winner ?? null,
+                    score,
+                    gameOver,
+                    lastCell: lastCell ?? null,
+                    lastPlayer: lastPlayer.current ?? null,
+                }),
+            );
+        } catch (error) {
+            console.error("Could not save the Tic Tac Toe game.", error);
+        }
+    }, [status, winner, score, gameOver, lastCell]);
 
     // Update the game status, ignore the click when it is not allowed
     //  - idx: index of the square
