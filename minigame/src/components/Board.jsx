@@ -34,9 +34,7 @@ function getInitialGameState() {
             parsed.score[PLAYER_O] >= 0;
         const validLastCell =
             parsed.lastCell === null ||
-            (Number.isInteger(parsed.lastCell) &&
-                parsed.lastCell >= 0 &&
-                parsed.lastCell < CELL_COUNT);
+            (Number.isInteger(parsed.lastCell) && parsed.lastCell >= 0 && parsed.lastCell < CELL_COUNT);
 
         if (
             !validStatus ||
@@ -177,9 +175,15 @@ export function Board() {
                     })}
                 </div>
             ))}
-            {gameOver && winner && <div>Game over! {winner} won</div>}
-            {gameOver && !winner && <div>Draw! No winner</div>}
-            {gameOver && <button onClick={handlePlayAgain}>Reset</button>}
+            <div className="result">
+                {gameOver && !winner && <div>Draw! No winner</div>}
+                {gameOver && winner && <div>Game over! {winner} won</div>}
+                {gameOver && (
+                    <button className="reset-button" onClick={handlePlayAgain}>
+                        Reset
+                    </button>
+                )}
+            </div>
         </div>
     );
 }

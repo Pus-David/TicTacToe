@@ -11,6 +11,12 @@
 .score {
     padding: 12px 0;
     background-color: #ff7e5f;
+    border-radius: 10px 10px 0 0;
+}
+.result {
+    padding: 12px 0;
+    background-color: #ff7e5f;
+    border-radius: 0 0 10px 10px;
 }
 
 .square {
@@ -35,4 +41,14 @@ body {
     margin-top: 50px;
     background: linear-gradient(to right, #ff7e5f, #feb47b);
     color: white;
+}
+
+.reset-button {
+    background: linear-gradient(to right, #808080, #ffffff);
+    color: white;
+    border: solid 1px white;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
 }
