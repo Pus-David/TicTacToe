@@ -2,6 +2,17 @@
     display: flex;
 }
 
+.board {
+    display: inline-block;
+    border: 2.5px solid black;
+    border-radius: 10px;
+}
+
+.score {
+    padding: 12px 0;
+    background-color: #ff7e5f;
+}
+
 .square {
     width: 100px;
     height: 100px;
@@ -16,4 +27,12 @@
 
 .square.lastcell {
     background-color: lightgray;
+}
+
+body {
+    font-family: sans-serif;
+    text-align: center;
+    margin-top: 50px;
+    background: linear-gradient(to right, #ff7e5f, #feb47b);
+    color: white;
 }

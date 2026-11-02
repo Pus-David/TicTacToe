@@ -19,6 +19,7 @@ const WIN_POSITIONS = [
 export function Board() {
     const [status, setStatus] = useState(new Array(CELL_COUNT).fill(undefined));
     const [winner, setWinner] = useState();
+    const [score, setScore] = useState({ [PLAYER_X]: 0, [PLAYER_O]: 0 });
     const [gameOver, setGameOver] = useState(false);
     const [lastCell, setLastCell] = useState();
     let lastPlayer = useRef();
@@ -35,8 +36,8 @@ export function Board() {
         // ignore the occupied cells
         if (status[idx]) return;
 
-        // ignore if gameOver
-        if (winner) return;
+        // Ignore moves after a win or a draw.
+        if (gameOver) return;
 
         // update the status
         lastPlayer.current = player;
@@ -59,6 +60,10 @@ export function Board() {
         if (isGameOver) {
             setWinner(player);
             setGameOver(true);
+            setScore((currentScore) => ({
+                ...currentScore,
+                [player]: currentScore[player] + 1,
+            }));
             return;
         }
         if (newStatus.every((cell) => cell)) {
@@ -76,12 +81,16 @@ export function Board() {
 
     return (
         <div className="board">
+            <div className="score">
+                Points X: {score[PLAYER_X]} | O: {score[PLAYER_O]}
+            </div>
             {BOARD_INDICES.map((rowIndex) => (
-                <div className="board-row">
+                <div className="board-row" key={rowIndex}>
                     {BOARD_INDICES.map((columnIndex) => {
                         const index = rowIndex * BOARD_SIDES + columnIndex;
                         return (
                             <Square
+                                key={index}
                                 value={status[index]}
                                 highlight={index === lastCell}
                                 onSquareClick={(player) => handleClick(index, player)}
@@ -90,7 +99,7 @@ export function Board() {
                     })}
                 </div>
             ))}
-            {gameOver && winner && <div>`Game over! {winner} won`</div>}
+            {gameOver && winner && <div>Game over! {winner} won</div>}
             {gameOver && !winner && <div>Draw! No winner</div>}
             {gameOver && <button onClick={handlePlayAgain}>Reset</button>}
         </div>
